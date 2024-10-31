@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/dashboard.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'screens/summary.dart';
 
 void main() => runApp(const MyApp());
 
@@ -28,15 +30,22 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // List of pages for each tab
   static const List<Widget> _pages = <Widget>[
-    DashScreen(),
-    SummaryScreen(),
+    DashScreen(), // Assuming you have a DashScreen defined
     ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == 1) {
+      // Navigate to SummaryScreen when the Summary tab is tapped
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const SummaryScreen()),
+      );
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
 
   @override
@@ -64,21 +73,6 @@ class _DashboardPageState extends State<DashboardPage> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.deepPurple,
         onTap: _onItemTapped,
-      ),
-    );
-  }
-}
-
-// Summary Screen
-class SummaryScreen extends StatelessWidget {
-  const SummaryScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Summary Screen',
-        style: Theme.of(context).textTheme.headlineSmall,
       ),
     );
   }

@@ -2,9 +2,30 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
+import 'summary.dart'; // Import the SummaryScreen
 
-class ServiceTypeProvidedPage extends StatelessWidget {
+class ServiceTypeProvidedPage extends StatefulWidget {
   const ServiceTypeProvidedPage({super.key});
+
+  @override
+  _ServiceTypeProvidedPageState createState() => _ServiceTypeProvidedPageState();
+}
+
+class _ServiceTypeProvidedPageState extends State<ServiceTypeProvidedPage> {
+  // Controllers for input fields
+  final TextEditingController inmateReleaseController = TextEditingController();
+  final TextEditingController juvenileDiversionController = TextEditingController();
+  final TextEditingController successfulMediationController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Dispose of controllers to free resources
+    inmateReleaseController.dispose();
+    juvenileDiversionController.dispose();
+    successfulMediationController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,12 +46,40 @@ class ServiceTypeProvidedPage extends StatelessWidget {
 
             _buildServiceProvidedInput(
               'Inmate or persons in police custody successfully released on police bond or bail following LSU or legal desk\'s assistance',
+              inmateReleaseController,
             ),
             _buildServiceProvidedInput(
               'Juveniles sent for diversion following LSU or legal desk\'s assistance',
+              juvenileDiversionController,
             ),
             _buildServiceProvidedInput(
               'Successful mediation (in civil cases)',
+              successfulMediationController,
+            ),
+
+            // Submit Button
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  backgroundColor: Colors.deepPurpleAccent,
+                  elevation: 8,
+                ),
+                onPressed: () async {
+                  await _saveData(); // Save data
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SummaryScreen()), // Navigate to SummaryScreen
+                  );
+                },
+                child: const Text(
+                  'Submit',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
           ],
         ),
@@ -39,7 +88,7 @@ class ServiceTypeProvidedPage extends StatelessWidget {
   }
 
   // Method to create input fields for each service type
-  Widget _buildServiceProvidedInput(String label) {
+  Widget _buildServiceProvidedInput(String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Container(
@@ -67,6 +116,7 @@ class ServiceTypeProvidedPage extends StatelessWidget {
 
             // Input field for number of clients
             TextFormField(
+              controller: controller,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: InputDecoration(
@@ -96,5 +146,15 @@ class ServiceTypeProvidedPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // Method to save data
+  Future<void> _saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Save relevant data here
+    await prefs.setString('inmate_release', inmateReleaseController.text);
+    await prefs.setString('juvenile_diversion', juvenileDiversionController.text);
+    await prefs.setString('successful_mediation', successfulMediationController.text);
   }
 }

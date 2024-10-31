@@ -2,9 +2,32 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
+import 'summary.dart'; // Import the SummaryScreen
 
-class CivilCriminalTypesPage extends StatelessWidget {
+class CivilCriminalTypesPage extends StatefulWidget {
   const CivilCriminalTypesPage({super.key});
+
+  @override
+  _CivilCriminalTypesPageState createState() => _CivilCriminalTypesPageState();
+}
+
+class _CivilCriminalTypesPageState extends State<CivilCriminalTypesPage> {
+  // Define controllers for each input field
+  final TextEditingController civilCasesController = TextEditingController();
+  final TextEditingController criminalCasesController = TextEditingController();
+  final TextEditingController otherCivilDescriptionController = TextEditingController();
+  final TextEditingController otherCriminalDescriptionController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Dispose of controllers to free resources
+    civilCasesController.dispose();
+    criminalCasesController.dispose();
+    otherCivilDescriptionController.dispose();
+    otherCriminalDescriptionController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +53,8 @@ class CivilCriminalTypesPage extends StatelessWidget {
             _buildCaseTypeInput('Land Disputes'),
             _buildCaseTypeInput('Torts'),
             _buildCaseTypeInput('Disability Right Issues'),
-            _buildOtherCaseTypeInput(),
-            _buildTotalNumberInput('Total Number of Civil Cases'),
+            _buildOtherCaseTypeInput(otherCivilDescriptionController),
+            _buildTotalNumberInput(civilCasesController, 'Total Number of Civil Cases'),
             const SizedBox(height: 40),
 
             // Criminal Cases Section
@@ -49,9 +72,34 @@ class CivilCriminalTypesPage extends StatelessWidget {
             _buildCaseTypeInput('Wildlife Related Offences'),
             _buildCaseTypeInput('Immigration Related Offences'),
             _buildCaseTypeInput('Offenses Against Public Order'),
-            _buildOtherCaseTypeInput('Other Type of Criminal Matters'),
-            _buildTotalNumberInput('Total Number of Clients with Criminal Cases'),
-            _buildTotalNumberInput('Total Number of Clients'),
+            _buildOtherCaseTypeInput(otherCriminalDescriptionController, 'Other Type of Criminal Matters'),
+            _buildTotalNumberInput(criminalCasesController, 'Total Number of Clients with Criminal Cases'),
+            _buildTotalNumberInput(criminalCasesController, 'Total Number of Clients'),
+
+            // Submit Button
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  backgroundColor: Colors.deepPurpleAccent,
+                  elevation: 8,
+                ),
+                onPressed: () async {
+                  await _saveData(); // Save data
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SummaryScreen()), // Navigate to SummaryScreen
+                  );
+                },
+                child: const Text(
+                  'Submit',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -103,7 +151,7 @@ class CivilCriminalTypesPage extends StatelessWidget {
   }
 
   // Method to create input fields for "Other types" with additional brief field
-  Widget _buildOtherCaseTypeInput([String label = 'Other Type of Civil Case']) {
+  Widget _buildOtherCaseTypeInput(TextEditingController controller, [String label = 'Other Type of Civil Case']) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: Container(
@@ -142,6 +190,7 @@ class CivilCriminalTypesPage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             TextFormField(
+              controller: controller,
               decoration: InputDecoration(
                 labelText: 'Brief Description',
                 filled: true,
@@ -158,10 +207,11 @@ class CivilCriminalTypesPage extends StatelessWidget {
   }
 
   // Method to create total number input fields
-  Widget _buildTotalNumberInput(String label) {
+  Widget _buildTotalNumberInput(TextEditingController controller, String label) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: TextFormField(
+        controller: controller,
         keyboardType: TextInputType.number,
         inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         decoration: InputDecoration(
@@ -174,5 +224,16 @@ class CivilCriminalTypesPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // Method to save data
+  Future<void> _saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Save relevant data here
+    await prefs.setString('total_civil_cases', civilCasesController.text);
+    await prefs.setString('total_criminal_cases', criminalCasesController.text);
+    await prefs.setString('other_civil_cases_description', otherCivilDescriptionController.text);
+    await prefs.setString('other_criminal_cases_description', otherCriminalDescriptionController.text);
   }
 }

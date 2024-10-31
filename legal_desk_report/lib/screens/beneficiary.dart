@@ -1,9 +1,38 @@
-// screens/beneficiaries.dart
-
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'summary.dart'; // Make sure to import the SummaryScreen
 
-class BeneficiariesPage extends StatelessWidget {
-  const BeneficiariesPage({super.key});
+class BeneficiariesPage extends StatefulWidget {
+  const BeneficiariesPage({Key? key}) : super(key: key);
+
+  @override
+  _BeneficiariesPageState createState() => _BeneficiariesPageState();
+}
+
+class _BeneficiariesPageState extends State<BeneficiariesPage> {
+  // Define controllers for each text field
+  final TextEditingController civilAdultMaleController = TextEditingController();
+  final TextEditingController civilAdultMaleDisabilitiesController = TextEditingController();
+  final TextEditingController civilAdultFemaleController = TextEditingController();
+  final TextEditingController civilAdultFemaleDisabilitiesController = TextEditingController();
+  final TextEditingController criminalAdultMaleController = TextEditingController();
+  final TextEditingController criminalAdultMaleDisabilitiesController = TextEditingController();
+  final TextEditingController criminalAdultFemaleController = TextEditingController();
+  final TextEditingController criminalAdultFemaleDisabilitiesController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Dispose of controllers to free resources
+    civilAdultMaleController.dispose();
+    civilAdultMaleDisabilitiesController.dispose();
+    civilAdultFemaleController.dispose();
+    civilAdultFemaleDisabilitiesController.dispose();
+    criminalAdultMaleController.dispose();
+    criminalAdultMaleDisabilitiesController.dispose();
+    criminalAdultFemaleController.dispose();
+    criminalAdultFemaleDisabilitiesController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,68 +45,78 @@ class BeneficiariesPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            // Civil Case Section
-            const Text(
-              'Type of Case: Civil',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            _buildSection('Civil', civilAdultMaleController, civilAdultMaleDisabilitiesController, civilAdultFemaleController, civilAdultFemaleDisabilitiesController),
+            const SizedBox(height: 30),
+            _buildSection('Criminal', criminalAdultMaleController, criminalAdultMaleDisabilitiesController, criminalAdultFemaleController, criminalAdultFemaleDisabilitiesController),
+            const SizedBox(height: 30),
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  backgroundColor: Colors.deepPurpleAccent,
+                  elevation: 8,
+                ),
+                onPressed: () async {
+                  await _saveData(); // Save data
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SummaryScreen()), // Navigate to SummaryScreen
+                  );
+                },
+                child: const Text(
+                  'Submit',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
-            const SizedBox(height: 20),
-            _buildAdultSection('Adults'),
-            const SizedBox(height: 20),
-            _buildChildSection('Children'),
-            const SizedBox(height: 40),
-
-            // Criminal Case Section
-            const Text(
-              'Type of Case: Criminal',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            _buildAdultSection('Adults'),
-            const SizedBox(height: 20),
-            _buildChildSection('Children'),
           ],
         ),
       ),
     );
   }
 
-  // Method to build adults section
-  Widget _buildAdultSection(String label) {
+  Future<void> _saveData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('civil_adult_male_clients', civilAdultMaleController.text);
+    await prefs.setString('civil_adult_male_disabilities', civilAdultMaleDisabilitiesController.text);
+    await prefs.setString('civil_adult_female_clients', civilAdultFemaleController.text);
+    await prefs.setString('civil_adult_female_disabilities', civilAdultFemaleDisabilitiesController.text);
+    await prefs.setString('criminal_adult_male_clients', criminalAdultMaleController.text);
+    await prefs.setString('criminal_adult_male_disabilities', criminalAdultMaleDisabilitiesController.text);
+    await prefs.setString('criminal_adult_female_clients', criminalAdultFemaleController.text);
+    await prefs.setString('criminal_adult_female_disabilities', criminalAdultFemaleDisabilitiesController.text);
+  }
+
+  Widget _buildSection(
+    String caseType,
+    TextEditingController maleController,
+    TextEditingController maleDisabilitiesController,
+    TextEditingController femaleController,
+    TextEditingController femaleDisabilitiesController,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Adults',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        Text(
+          'Type of Case: $caseType',
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        const SizedBox(height: 10),
-        _buildGenderSection('$label - Male'),
-        const SizedBox(height: 10),
-        _buildGenderSection('$label - Female'),
+        const SizedBox(height: 20),
+        _buildGenderSection('$caseType - Adult Male', maleController, maleDisabilitiesController),
+        const SizedBox(height: 20),
+        _buildGenderSection('$caseType - Adult Female', femaleController, femaleDisabilitiesController),
       ],
     );
   }
 
-  // Method to build children section
-  Widget _buildChildSection(String label) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Children',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-        ),
-        const SizedBox(height: 10),
-        _buildGenderSection('$label - Male'),
-        const SizedBox(height: 10),
-        _buildGenderSection('$label - Female'),
-      ],
-    );
-  }
-
-  // Method to build gender input sections
-  Widget _buildGenderSection(String label) {
+  Widget _buildGenderSection(
+    String label,
+    TextEditingController clientsController,
+    TextEditingController disabilitiesController,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -95,44 +134,27 @@ class BeneficiariesPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 10),
+          TextFormField(
+            controller: clientsController,
+            decoration: const InputDecoration(
+              labelText: 'Number of Clients',
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
           ),
           const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Number of Clients',
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 15),
-              Expanded(
-                child: TextFormField(
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                    labelText: 'Clients with Disabilities',
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          TextFormField(
+            controller: disabilitiesController,
+            decoration: const InputDecoration(
+              labelText: 'Number of Clients with Disabilities',
+              border: OutlineInputBorder(),
+            ),
+            keyboardType: TextInputType.number,
           ),
         ],
       ),
     );
   }
-}
+} 

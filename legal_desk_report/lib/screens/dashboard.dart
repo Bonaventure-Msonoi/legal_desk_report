@@ -5,6 +5,9 @@ import 'desk_info.dart';
 import 'beneficiary.dart';
 import 'civil_criminal_types.dart';
 import 'service_type_provided.dart';
+import 'outcome_type_waivers.dart';
+import 'awareness_activities.dart';
+
 class DashScreen extends StatelessWidget {
   const DashScreen({super.key});
 
@@ -24,6 +27,8 @@ class DashScreen extends StatelessWidget {
           BeneficiariesPage(),
           CivilCriminalTypesPage(),
           ServiceTypeProvidedPage(),
+          OutcomeTypeWaiversPage(),
+          AwarenessActivitiesPage(),
         ],
       ),
     );

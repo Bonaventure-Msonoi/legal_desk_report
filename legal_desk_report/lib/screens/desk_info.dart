@@ -1,9 +1,32 @@
-// screens/desk_info.dart
-
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'summary.dart'; // Make sure to import the SummaryScreen
 
-class DeskInfoPage extends StatelessWidget {
+class DeskInfoPage extends StatefulWidget {
   const DeskInfoPage({super.key});
+
+  @override
+  _DeskInfoPageState createState() => _DeskInfoPageState();
+}
+
+class _DeskInfoPageState extends State<DeskInfoPage> {
+  // Define controllers for the text fields
+  final TextEditingController monthYearController = TextEditingController();
+  final TextEditingController organisationController = TextEditingController();
+  final TextEditingController provinceController = TextEditingController();
+  final TextEditingController deskTypeController = TextEditingController();
+  final TextEditingController deskNameController = TextEditingController();
+
+  @override
+  void dispose() {
+    // Dispose of the controllers when the widget is removed from the widget tree
+    monthYearController.dispose();
+    organisationController.dispose();
+    provinceController.dispose();
+    deskTypeController.dispose();
+    deskNameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,22 +57,33 @@ class DeskInfoPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // New Input Field for Month and Year
                   _buildInputField(
+                    controller: monthYearController,
+                    label: 'Month and Year of Report',
+                    hintText: 'Enter month and year (e.g. October 2024)',
+                  ),
+                  const SizedBox(height: 20),
+                  _buildInputField(
+                    controller: organisationController,
                     label: 'CSO/Implementing Organisation',
                     hintText: 'Enter organisation name',
                   ),
                   const SizedBox(height: 20),
                   _buildInputField(
+                    controller: provinceController,
                     label: 'Desk Location (Province)',
                     hintText: 'Enter province location',
                   ),
                   const SizedBox(height: 20),
                   _buildInputField(
+                    controller: deskTypeController,
                     label: 'Type of Desk',
                     hintText: 'Specify type of desk',
                   ),
                   const SizedBox(height: 20),
                   _buildInputField(
+                    controller: deskNameController,
                     label: 'Name of Desk',
                     hintText: 'Enter name of desk',
                   ),
@@ -67,8 +101,20 @@ class DeskInfoPage extends StatelessWidget {
                         backgroundColor: Colors.deepPurpleAccent,
                         elevation: 8,
                       ),
-                      onPressed: () {
-                        // Handle form submission here
+                      onPressed: () async {
+                        SharedPreferences prefs = await SharedPreferences.getInstance();
+                        // Store data
+                        await prefs.setString('report_month_year', monthYearController.text);
+                        await prefs.setString('organisation_name', organisationController.text);
+                        await prefs.setString('province_location', provinceController.text);
+                        await prefs.setString('desk_type', deskTypeController.text);
+                        await prefs.setString('desk_name', deskNameController.text);
+                        
+                        // Navigate to summary page
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SummaryScreen()),
+                        );
                       },
                       child: const Text(
                         'Submit',
@@ -85,7 +131,11 @@ class DeskInfoPage extends StatelessWidget {
     );
   }
 
-  Widget _buildInputField({required String label, required String hintText}) {
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String label,
+    required String hintText,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -99,6 +149,7 @@ class DeskInfoPage extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         TextFormField(
+          controller: controller, // Attach the controller here
           decoration: InputDecoration(
             hintText: hintText,
             filled: true,

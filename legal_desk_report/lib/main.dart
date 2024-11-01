@@ -30,7 +30,8 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // List of pages for each tab
   static const List<Widget> _pages = <Widget>[
-    DashScreen(), // Assuming you have a DashScreen defined
+    DashScreen(),
+    SummaryScreen(), 
     ProfileScreen(),
   ];
 

@@ -124,7 +124,7 @@ class _AwarenessActivitiesPageState extends State<AwarenessActivitiesPage> {
                   );
                 },
                 child: const Text(
-                  'Submit',
+                  'Next',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),

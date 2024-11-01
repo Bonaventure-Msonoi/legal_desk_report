@@ -1,5 +1,3 @@
-// screens/dashboard.dart
-
 import 'package:flutter/material.dart';
 import 'desk_info.dart';
 import 'beneficiary.dart';
@@ -14,21 +12,64 @@ class DashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       body: PageView(
-        children: const [
-          Center(
-            child: Text(
-              'Dashboard Screen on the low',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        children: [
+          // Initial Cute "Under Construction" Page
+          Container(
+            color: Colors.purple.shade50,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Construction Icon
+                  Icon(
+                    Icons.construction,
+                    size: 100,
+                    color: Colors.deepPurpleAccent.shade100,
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  // Dashboard Message
+                  Text(
+                    'Dashboard Under Construction',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.deepPurple.shade800,
+                    ),
+                  ),
+                  
+                  // Swipe Instructions
+                  const SizedBox(height: 15),
+                  Text(
+                    'Swipe right to explore more!',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.deepPurpleAccent.shade700,
+                    ),
+                  ),
+                  
+                  // Swiping Arrow
+                  const SizedBox(height: 30),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 40,
+                    color: Colors.deepPurpleAccent.shade100,
+                  ),
+                ],
+              ),
             ),
           ),
-          DeskInfoPage(), // Swipable Desk Info Page
-          BeneficiariesPage(),
-          CivilCriminalTypesPage(),
-          ServiceTypeProvidedPage(),
-          OutcomeTypeWaiversPage(),
-          AwarenessActivitiesPage(),
+
+          // Other Pages
+          const DeskInfoPage(),
+          const BeneficiariesPage(),
+          const CivilCriminalTypesPage(),
+          const ServiceTypeProvidedPage(),
+          const OutcomeTypeWaiversPage(),
+          const AwarenessActivitiesPage(),
         ],
       ),
     );

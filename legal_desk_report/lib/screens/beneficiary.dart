@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'summary.dart'; // Make sure to import the SummaryScreen
-
+import 'civil_criminal_types.dart';
 class BeneficiariesPage extends StatefulWidget {
   const BeneficiariesPage({Key? key}) : super(key: key);
 
@@ -63,11 +63,11 @@ class _BeneficiariesPageState extends State<BeneficiariesPage> {
                   await _saveData(); // Save data
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SummaryScreen()), // Navigate to SummaryScreen
+                    MaterialPageRoute(builder: (context) => const CivilCriminalTypesPage()), // Navigate to SummaryScreen
                   );
                 },
                 child: const Text(
-                  'Submit',
+                  'Next',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),

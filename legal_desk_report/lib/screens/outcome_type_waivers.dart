@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 import 'summary.dart'; // Import the SummaryScreen
+import 'awareness_activities.dart';
 
 class OutcomeTypeWaiversPage extends StatefulWidget {
   const OutcomeTypeWaiversPage({super.key});
@@ -92,11 +93,11 @@ class _OutcomeTypeWaiversPageState extends State<OutcomeTypeWaiversPage> {
                   await _saveData(); // Save data
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SummaryScreen()), // Navigate to SummaryScreen
+                    MaterialPageRoute(builder: (context) => const AwarenessActivitiesPage()), // Navigate to SummaryScreen
                   );
                 },
                 child: const Text(
-                  'Submit',
+                  'Next',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),

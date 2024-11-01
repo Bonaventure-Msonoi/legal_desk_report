@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 import 'summary.dart'; // Import the SummaryScreen
+import 'service_type_provided.dart';
+
 
 class CivilCriminalTypesPage extends StatefulWidget {
   const CivilCriminalTypesPage({super.key});
@@ -91,11 +93,11 @@ class _CivilCriminalTypesPageState extends State<CivilCriminalTypesPage> {
                   await _saveData(); // Save data
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SummaryScreen()), // Navigate to SummaryScreen
+                    MaterialPageRoute(builder: (context) => const ServiceTypeProvidedPage()), // Navigate to SummaryScreen
                   );
                 },
                 child: const Text(
-                  'Submit',
+                  'Next',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
